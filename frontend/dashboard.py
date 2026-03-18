@@ -26,9 +26,9 @@ if uploaded_file is None:
 with st.spinner("Running analytics..."):
 
     response = requests.post(
-    "http://127.0.0.1:5000/upload",
-    files={"file": uploaded_file}
-)
+        "http://127.0.0.1:5000/upload",
+        files={"file": uploaded_file}
+    )
 
 if response.status_code != 200:
     st.error(f"Backend error: {response.text}")
@@ -135,3 +135,77 @@ with tab4:
         st.error("⚠ Products at risk of expiry")
 
     st.dataframe(expiry)
+
+# ---------------- AI BUSINESS ASSISTANT ---------------- #
+
+st.divider()
+
+st.header("🤖 AI Business Assistant")
+
+provider = st.selectbox(
+    "Select AI Provider",
+    ["openai", "groq"]
+)
+
+question = st.text_input(
+    "Ask a question about your business data"
+)
+
+api_key = st.text_input(
+    "Enter API Key",
+    type="password"
+)
+
+if provider == "openai":
+
+    base_url = st.text_input(
+        "Base URL",
+        value="https://api.openai.com/v1"
+    )
+
+    model_name = st.text_input(
+        "Model Name",
+        value="gpt-4o-mini"
+    )
+
+else:
+
+    base_url = st.text_input(
+        "Base URL",
+        value="https://api.groq.com/openai/v1"
+    )
+
+    model_name = st.text_input(
+        "Model Name",
+        value="llama-3.3-70b-versatile"
+    )
+
+if st.button("Generate AI Insights"):
+
+    if not question:
+        st.warning("Please enter a question.")
+        st.stop()
+
+    if not api_key:
+        st.warning("Please enter API key.")
+        st.stop()
+
+    with st.spinner("Generating AI insights..."):
+
+        response = requests.post(
+            "http://127.0.0.1:5000/ai-insights",
+            json={
+                "question": question,
+                "api_key": api_key,
+                "base_url": base_url,
+                "model_name": model_name,
+                "provider": provider
+            }
+        )
+
+        if response.status_code != 200:
+            st.error("AI service error")
+        else:
+            answer = response.json()["answer"]
+            st.success("AI Insight")
+            st.write(answer)
