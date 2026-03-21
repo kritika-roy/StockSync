@@ -1,7 +1,6 @@
 /* style.css */
 :root {
     --gusto-green: #232122;
-    /* Changed from Green to Black/Dark Text */
     --gusto-mint: #d4f0f0;
     --gusto-guava: #ff5c5c;
     --gusto-cream: #fefeff;
@@ -16,17 +15,11 @@
 
 [data-theme="dark"] {
     --dashboard-bg: #0d1117;
-    /* Deep space black */
     --card-bg: #161b22;
-    /* Sleek charcoal */
     --text-dark: #f0f6fc;
-    /* Crisp off-white */
     --text-muted: #8b949e;
-    /* Soft steel gray */
     --border-color: #30363d;
-    /* Subtle metallic border */
     --gusto-green: #ff3b3b;
-    /* Electric Crimson accent */
     --accent-glow: rgba(255, 59, 59, 0.15);
 }
 
@@ -271,11 +264,10 @@ section {
     font-weight: 600;
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     color: #444;
-    /* Or your preferred dark text color */
+    
 }
 
 /* The Hover State */
-/* Specific hover color requested by user */
 .feature-tab-gusto:hover:not(.active) {
     background-color: #960707 !important;
     color: white !important;
@@ -290,34 +282,27 @@ section {
 
     /* The "Glow" shadow */
     box-shadow: 0 0 20px rgba(255, 127, 112, 0.4);
-
-    /* Optional: subtle lift */
     transform: translateY(-2px);
 }
 
-/* Ensure active state stands out from the hover state */
 .feature-tab-gusto.active {
     background-color: var(--gusto-guava) !important;
-    /* Your original coral/red */
     color: white !important;
     font-weight: 700;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* 2. JIRA-STYLE IMAGE HIGHLIGHT */
+
 .ai-features-gusto .col-lg-7 {
     position: relative;
     padding: 30px;
 }
 
-/* The Blue Offset Background Box behind the image */
 .ai-features-gusto .col-lg-7::before {
     content: "";
     position: absolute;
     top: 50px;
-    /* Offset from the top */
     left: 70px;
-    /* Offset from the left */
     right: 10px;
     bottom: 10px;
     background-color: #960707;
@@ -572,7 +557,6 @@ section {
     display: none;
     min-height: 100vh;
     background-color: var(--dashboard-bg) !important;
-    /* Changed from var(--gusto-cream) */
     padding-top: 40px;
     padding-bottom: 100px;
     position: relative;
@@ -675,22 +659,18 @@ section {
     margin-left: 0 !important;
     list-style: none;
     text-align: center;
-    /* Centers the list items relative to the heading */
 }
 
 .footer-links-gusto li {
     color: white !important;
-    /* Explicitly keeping text white */
 }
 
 .footer-section h5 {
     margin-bottom: 20px !important;
-    /* More space between the Title and the Links */
     color: white !important;
-    /* Explicitly keeping title white */
 }
 
-/* DARK MODE TEXT CORRECTIONS */
+
 [data-theme="dark"] .table {
     --bs-table-bg: transparent !important;
     background-color: transparent !important;
@@ -702,13 +682,11 @@ section {
 [data-theme="dark"] .table td {
     background-color: transparent !important;
     color: var(--text-muted) !important;
-    /* Muted for secondary data */
     border-bottom: 1px solid var(--border-color) !important;
 }
 
 [data-theme="dark"] .stat-value {
     color: var(--gusto-green) !important;
-    /* Uses the neon green */
     text-shadow: 0 0 10px rgba(79, 223, 175, 0.3);
 }
 
@@ -741,7 +719,6 @@ section {
     background: #ffffff;
     border-radius: 20px;
     border-left: 6px solid #960707;
-    /* Matches your brand color */
 }
 
 /* Rounded Inputs */
@@ -760,7 +737,6 @@ section {
 
 .ai-response-box {
     background: #fff5f5;
-    /* Very light tint of your red */
     border: 1px solid #ffcccc;
     padding: 15px;
     border-radius: 12px;
@@ -814,7 +790,6 @@ section {
     font-weight: 600;
 }
 
-/* Hover effect for techie feel */
 [data-theme="dark"] .table-hover tbody tr:hover td {
     background-color: rgba(255, 255, 255, 0.03) !important;
     color: #ffffff !important;
@@ -829,7 +804,6 @@ section {
 
 .ai-insight-box {
     background: #16251c;
-    /* Very dark green */
     border-left: 4px solid #28a745;
     padding: 1rem;
     border-radius: 8px;
@@ -839,7 +813,6 @@ section {
 .chart-container {
     margin-top: 20px;
     overflow: hidden;
-    /* Prevents scrollbars inside the card */
 }
 
 .kpi-nav-card {
@@ -863,7 +836,6 @@ section {
     background: #ffffff;
     border-color: #28a745;
     border-left: 6px solid #28a745;
-    /* Gusto Green accent */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
@@ -888,7 +860,6 @@ section {
     width: 100% !important;
     height: 300px !important;
     image-rendering: auto;
-    /* Standard for high-res screens */
 }
 
 /* Ensure the container doesn't squash the canvas */
@@ -899,7 +870,6 @@ section {
 /* Custom styling for the dark input theme */
 .custom-ai-input {
     background-color: #3e444a !important;
-    /* The grey color from your photo */
     border: 1px solid #495057 !important;
     color: #ffffff !important;
     padding: 12px 15px !important;
@@ -921,16 +891,14 @@ section {
     border: 1px solid #495057;
 }
 
-/* Dashboard spacing adjustment */
+
 #dashboard-view {
     padding: 30px !important;
-    /* Adds the padding seen in photo 2 */
 }
 
 /* --- 1. Top KPI Row (Compact & Small) --- */
 #dashboard-view .container>.row:nth-of-type(1) .stat-card {
     min-height: 120px !important;
-    /* Forces them to shrink */
     padding: 1rem !important;
     display: flex;
     flex-direction: column;
@@ -940,7 +908,6 @@ section {
 
 #dashboard-view .container>.row:nth-of-type(1) h5 {
     font-size: 1.8rem !important;
-    /* Slightly smaller numbers */
     margin: 5px 0 0 0;
 }
 
@@ -950,13 +917,10 @@ section {
 }
 
 /* --- 2. Middle Section (Hub & Charts) --- */
-/* Target the second row to ensure it takes up the bulk of the screen */
 #dashboard-view .container>.row:nth-of-type(2) .stat-card {
     min-height: 100px !important;
-    /* Gives the graph area plenty of height */
 }
 
-/* Adjust the Dashboard Hub cards to stay slim */
 .kpi-nav-card {
     padding: 12px 15px !important;
     margin-bottom: 10px;
@@ -967,23 +931,19 @@ section {
 #dashboard-view .ai-assistant-container,
 #dashboard-view .row:last-of-type .stat-card {
     min-height: auto !important;
-    /* Prevents the black box from stretching */
     padding: 1.5rem !important;
 }
 
 .custom-ai-input {
     height: 40px !important;
-    /* Slimmer input fields */
 }
 
 .btn-ai-bubble {
     padding: 8px 20px !important;
 }
 
-/* Specifically target the 3 small KPI cards at the top */
 .kpi-card-top {
     min-height: 120px !important;
-    /* Force them to be small */
     /* height: 140px !important; */
     display: flex !important;
     flex-direction: column !important;
@@ -991,7 +951,6 @@ section {
     align-items: center !important;
 }
 
-/* Adjust font sizing to fit the smaller boxes */
 .kpi-card-top h5,
 .kpi-card-top h2 {
     font-size: 2.2rem !important;
