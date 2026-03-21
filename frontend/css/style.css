@@ -192,11 +192,9 @@ section {
 }
 
 /* AI FEATURES SECTION */
-/* AI FEATURES SECTION */
 .ai-features-gusto {
     position: relative;
     padding: 100px 10%;
-    /* Warehouse background image stays as requested */
     background-image:
         linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
         url('../images/plan_track2.jpeg');
@@ -206,10 +204,8 @@ section {
     background-attachment: fixed;
 }
 
-/* 1. REMOVE WHITE BOX: Text now floats on the background */
 .feature-text-container {
     background: transparent !important;
-    /* Removed white background */
     padding: 0;
     border-radius: 0;
     backdrop-filter: none;
@@ -222,7 +218,6 @@ section {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Update text colors for readability on the warehouse background */
 .feature-text-container h4.fw-bold {
     color: #ffffff !important;
     font-size: 2rem;
@@ -234,11 +229,9 @@ section {
     /* Light gray/white for contrast */
 }
 
-/* JIRA-STYLE TAB BUTTONS */
 .feature-tab-gusto {
     border: none;
     background: rgba(255, 255, 255, 0.1);
-    /* Subtle transparent buttons */
     padding: 10px 25px;
     font-size: 18px;
     color: white;
