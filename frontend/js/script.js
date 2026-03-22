@@ -8,6 +8,7 @@ window.onbeforeunload = function () {
    ========================================== */
 let chartInstance = null;
 let lastAnalysisResult = null;
+let aiGeneratedText = null;
 
 /* ==========================================
    VIEW TOGGLING & NAVIGATION
@@ -451,7 +452,7 @@ function updateDashboard(data) {
                 <td>${item}</td>
                 <td>${row["Current Stock"] || 0}</td>
                 <td>${row["Suggested Restock"] !== undefined ? row["Suggested Restock"] : "Safe"}</td>
-                <td><span class="badge ${row["Status"] === 'Restock Needed' ? 'bg-danger' : 'bg-success'}">${row["Status"]}</span></td>
+                <td><span class="badge ${(row["Status"] === "Reorder Needed" || row["Status"] === "LOW_STOCK")? 'bg-danger': 'bg-success'}">${(row["Status"] === "Reorder Needed" || row["Status"] === "LOW_STOCK")? "Low Stock": "Optimal"}</span></td>
             </tr>
         `;
     }
@@ -509,6 +510,7 @@ async function askAI() {
 
         if (result.answer) {
             responseDiv.innerHTML = result.answer.replace(/\n/g, '<br>');
+            aiGeneratedText = result.answer;
         } else {
             throw new Error(result.error || "Failed to get AI response");
         }
@@ -532,53 +534,7 @@ function resetToUpload() {
     document.getElementById('csvFile').value = '';
 }
 
-async function exportFullReport() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const timestamp = new Date().toLocaleString();
 
-    // 1. Header & Title
-    doc.setFontSize(20);
-    doc.setTextColor(40, 167, 69); 
-    doc.text("StockSync Business Intelligence Report", 14, 22);
-
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Generated on: ${timestamp}`, 14, 30);
-
-    // 2. AI Insights Section
-    const aiResponse = document.getElementById('ai-response').innerText;
-    doc.setFontSize(14);
-    doc.setTextColor(0);
-    doc.text("AI Strategy & Insights", 14, 45);
-
-    doc.setFontSize(11);
-    const splitAiText = doc.splitTextToSize(aiResponse || "No AI insights generated yet.", 180);
-    doc.text(splitAiText, 14, 52);
-
-    // 3. Inventory Data Table
-    if (globalStoredData && globalStoredData.inventory_data) {
-        doc.setFontSize(14);
-        doc.text("Inventory Status Summary", 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 100);
-
-        const tableData = Object.entries(globalStoredData.inventory_data).map(([name, d]) => [
-            name,
-            d['Current Stock'],
-            d['Status']
-        ]);
-
-        doc.autoTable({
-            startY: doc.previousAutoTable ? doc.lastAutoTable.finalY + 10 : 110,
-            head: [['Product', 'Current Stock', 'Status']],
-            body: tableData,
-            theme: 'grid',
-            headStyles: { fillStyle: [40, 167, 69] }
-        });
-    }
-
-    // 4. Save the PDF
-    doc.save(`StockSync_Report_${Date.now()}.pdf`);
-}
 let revenueChartInstance = null; 
 
 function renderRevenueChart(revenueData) {
@@ -624,4 +580,54 @@ function renderRevenueChart(revenueData) {
             }
         }
     });
+}
+
+async function downloadReport() {
+
+    if (!globalStoredData) {
+        alert("Run analysis first!");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/download_report", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                ...globalStoredData,
+                ai_insights: aiGeneratedText
+            })
+        });
+
+        // ❗ CHECK RESPONSE FIRST (IMPORTANT)
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Server error");
+        }
+
+        const blob = await response.blob();
+
+        // ❗ VALIDATE FILE
+        if (blob.size === 0) {
+            throw new Error("Empty PDF received");
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.download = "Business_Report.pdf";
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url); // cleanup
+
+    } catch (err) {
+        console.error("Download error:", err);
+        alert("Download failed: " + err.message);
+    }
 }

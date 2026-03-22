@@ -23,7 +23,7 @@ def calculate_inventory(df, forecast_results):
 
         # Stock decision
         if current_stock < reorder_point:
-            status = "Reorder Needed"
+            status = "LOW_STOCK"
         else:
             status = "Stock Safe"
 

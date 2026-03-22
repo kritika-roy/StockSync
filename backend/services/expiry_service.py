@@ -2,7 +2,7 @@ def detect_expiry(df, forecast_results):
 
     expiry_results = {}
 
-    # Example shelf life (days) per product
+    # Shelf life (days)
     shelf_life_catalog = {
         "Rice": 365,
         "Oil": 365,
@@ -15,19 +15,22 @@ def detect_expiry(df, forecast_results):
 
     for product in products:
 
+        product_df = df[df["product_name"] == product]
+
+        if product_df.empty:
+            continue  # safety
+
         predicted_daily_demand = forecast_results[product]["Predicted Daily Demand"]
 
         shelf_life_days = shelf_life_catalog.get(product, 30)
 
-        current_stock = int(
-            df[df["product_name"] == product]["current_stock"].iloc[-1]
-        )
+        current_stock = int(product_df["current_stock"].iloc[-1])
 
-        # Maximum units that can be sold before expiry
+        # Max possible sales before expiry
         possible_sales = predicted_daily_demand * shelf_life_days
 
         if current_stock > possible_sales:
-            expiry_risk = current_stock - possible_sales
+            expiry_risk = int(round(current_stock - possible_sales))
             status = "Expiry Risk"
         else:
             expiry_risk = 0
@@ -37,7 +40,11 @@ def detect_expiry(df, forecast_results):
             "Shelf Life (days)": shelf_life_days,
             "Current Stock": current_stock,
             "Possible Sales Before Expiry": int(round(possible_sales)),
-            "Potential Expiry Units": int(round(expiry_risk)),
+            "Potential Expiry Units": expiry_risk,
+
+            # ✅ THIS IS THE FIX (CRITICAL)
+            "units": expiry_risk,
+
             "Status": status
         }
 

@@ -8,3 +8,24 @@ __pycache__/
 .env
 
 backend/uploads/*
+
+*.pyo
+*.pyd
+venv/
+.env/
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+
+*.log
+
+dist/
+build/
+
+*.pdf
+
+node_modules/
+
+*.png

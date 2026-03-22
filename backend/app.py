@@ -4,6 +4,8 @@ import pandas as pd
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
+from services.report_service import generate_report
+from flask import send_file
 from services.demand_forecast import forecast_demand
 from services.inventory_service import calculate_inventory
 from services.revenue_service import calculate_revenue
@@ -63,7 +65,7 @@ def upload():
 
         reorder_count = sum(
             1 for v in inventory.values()
-            if isinstance(v, dict) and v.get("Status") in ["REORDER", "Restock Needed"]
+            if isinstance(v, dict) and v.get("Status") == "LOW_STOCK"
         )
 
         expiry_count = sum(
@@ -83,6 +85,32 @@ def upload():
         }
 
         return jsonify(analytics_data)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+    
+    
+@app.route("/download_report", methods=["POST"])
+def download_report():
+    try:
+        data = request.json
+
+        print("DEBUG: Download request received")
+
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        file_path = generate_report(data)
+
+        print("DEBUG: Report generated at:", file_path)
+
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name="Business_Report.pdf"
+        )
 
     except Exception as e:
         import traceback
