@@ -11,6 +11,7 @@ from services.inventory_service import calculate_inventory
 from services.revenue_service import calculate_revenue
 from services.expiry_service import detect_expiry
 from rag.llm_client import call_llm
+import requests
 
 
 # ---------- PATH FIX ----------
@@ -116,7 +117,7 @@ def download_report():
         return jsonify({"error": str(e)}), 500
 
 
-# ---------- AI ----------
+
 @app.route("/ask_ai", methods=["POST"])
 def ask_ai():
     global analytics_data
@@ -126,11 +127,13 @@ def ask_ai():
 
     data = request.json
 
-    # ✅ ADD THIS BLOCK ONLY (KEY FIX)
     low_stock_products = {
         name: details for name, details in analytics_data["inventory_data"].items()
         if isinstance(details, dict) and details.get("Status") == "LOW_STOCK"
     }
+
+    # ✅ ADD THIS
+    revenue_products = analytics_data["revenue_data"]
 
     prompt = f"""
 Business Summary:
@@ -157,6 +160,8 @@ Rules:
 - Be precise
 - Do NOT give generic answers
 """
+
+    # ✅ UNCOMMENT THIS BLOCK
     try:
         answer = call_llm(
             data.get("provider"),
@@ -169,6 +174,39 @@ Rules:
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+    
+
+def call_llm(provider, api_key, model_name, prompt):
+
+    if provider == "groq":
+        url = "https://api.groq.com/openai/v1/chat/completions"
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "model": model_name,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.3
+        }
+
+        response = requests.post(url, headers=headers, json=data)
+
+        print("Groq Status:", response.status_code)
+        print("Groq Response:", response.text)
+
+        if response.status_code != 200:
+            raise Exception(response.text)
+
+        return response.json()["choices"][0]["message"]["content"]
+
+    else:
+        raise Exception("Unsupported provider")
 
 
 # ---------- DEBUG ROUTE ----------
