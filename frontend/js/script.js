@@ -3,16 +3,12 @@ window.onbeforeunload = function () {
     console.log("🚨 PAGE RELOADING");
 };
 
-/* ==========================================
-   GLOBAL VARIABLES
-   ========================================== */
+/* GLOBAL VARIABLES */
 let chartInstance = null;
 let lastAnalysisResult = null;
 let aiGeneratedText = null;
 
-/* ==========================================
-   VIEW TOGGLING & NAVIGATION
-   ========================================== */
+/* VIEW TOGGLING & NAVIGATION */
 function showSignup() {
     const landing = document.getElementById('landing-wrapper');
     const signup = document.getElementById('signup-view');
@@ -75,9 +71,7 @@ function navToSection(sectionId) {
     }, 100);
 }
 
-/* ==========================================
-   SCROLL REVEAL ANIMATION
-   ========================================== */
+/* SCROLL REVEAL ANIMATION */
 const revealOnScroll = () => {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -92,14 +86,11 @@ const revealOnScroll = () => {
     });
 };
 
-/* ==========================================
-   INITIALIZATION
-   ========================================== */
+/* INITIALIZATION */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Scroll Animations
+    
     revealOnScroll();
 
-    // 2. Dark Mode Toggle Logic (Persistent)
     const darkModeToggle = document.getElementById('darkModeToggle');
     if (darkModeToggle) {
         if (localStorage.getItem('theme') === 'dark') {
@@ -124,13 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Single ML Analysis Trigger
     const analyzeBtn = document.getElementById("analyzeBtn");
     if (analyzeBtn) {
         analyzeBtn.addEventListener("click", runMLAnalysis);
     }
 
-    // 4. Tab Setup
     const aiImages = {
         plan: "images/plan.jpeg",
         track: "images/track2.jpeg",
@@ -141,9 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs(".feature-tab", ".tab-content");
 });
 
-/* ==========================================
-   SIGNUP & FORM LOGIC
-   ========================================== */
+/* SIGNUP & FORM LOGIC */
 function handleSignup(event) {
     event.preventDefault();
     const companyInput = event.target.querySelector('input[placeholder="Company Name"]');
@@ -164,9 +151,7 @@ function handleSignup(event) {
     }, 1000);
 }
 
-/* ==========================================
-   TAB LOGIC
-   ========================================== */
+/* TAB LOGIC */
 function setupTabs(buttonClass, contentClass, imageId = null, imageMap = null) {
     const tabs = document.querySelectorAll(buttonClass);
     tabs.forEach(tab => {
@@ -195,9 +180,7 @@ function setupTabs(buttonClass, contentClass, imageId = null, imageMap = null) {
     });
 }
 
-/* ==========================================
-   ML ANALYSIS & DASHBOARD UPDATE
-   ========================================== */
+/* ML ANALYSIS & DASHBOARD UPDATE */
 
 let globalStoredData = null;
 
@@ -229,7 +212,6 @@ async function runMLAnalysis(e) {
         console.log("BACKEND RESPONSE:", data);
         globalStoredData = data;
 
-        // KPI updates
         document.getElementById('rev-value').innerText =
             `Rs. ${data.total_revenue.toLocaleString('en-IN')}`;
 
@@ -238,8 +220,7 @@ async function runMLAnalysis(e) {
 
         document.getElementById('expiry-count').innerText =
             data.expiry_count || 0;
-
-        // Switch UI
+        
         document.getElementById('upload-stage').classList.add('d-none');
         document.getElementById('nav-hub-stage').classList.remove('d-none');
 
@@ -265,19 +246,16 @@ function switchView(type, element) {
 
     const titleElement = document.getElementById('main-title');
 
-    // 1. Handle Navigation UI
     document.querySelectorAll('.kpi-nav-card')
         .forEach(c => c.classList.remove('active'));
     if (element) element.classList.add('active');
 
-    // 2. Handle Content Visibility
     document.querySelectorAll('.tab-content')
         .forEach(c => c.classList.add('d-none'));
 
     const targetContent = document.getElementById(`${type}-content`);
     if (targetContent) targetContent.classList.remove('d-none');
 
-    // 3. RENDER DATA BASED ON TAB
     if (type === 'sales') {
         if (titleElement) titleElement.innerText = "Product Demand Forecast";
         updateDemandChart(globalStoredData.demand_data);
@@ -292,7 +270,7 @@ function switchView(type, element) {
     }
     else if (type === 'inventory') {
         if (titleElement) titleElement.innerText = "Inventory Stock Levels";
-        // CRITICAL: Ensure we pass the correct data object
+
         renderInventoryTable(globalStoredData.inventory_data);
     }
 }
@@ -311,7 +289,6 @@ function populateExpiryTable(expiryData) {
     `).join('');
 }
 function renderInventoryTable(invData) {
-    // 1. Target BOTH table bodies
     const summaryBody = document.getElementById('inventory-summary-body');
     const fullAnalysisBody = document.getElementById('inventory-table-body');
 
@@ -334,13 +311,10 @@ function renderInventoryTable(invData) {
             </tr>`;
     }).join('');
 
-    // 3. Update both sections at once!
     if (summaryBody) summaryBody.innerHTML = rowsHtml;
     if (fullAnalysisBody) fullAnalysisBody.innerHTML = rowsHtml;
 }
-/* ==========================================
-   THEME-AWARE CHARTING
-   ========================================== */
+/* THEME-AWARE CHARTING */
 
 
 function updateDemandChart(demandData, isRefresh = false, cached = null) {
@@ -463,77 +437,6 @@ function updateDashboard(data) {
         updateDemandChart(demand);
     }
 }
-// async function askAI() {
-//     const question = document.getElementById('question').value;
-//     const apiKey = document.getElementById('apiKey').value;
-//     const model = document.getElementById('model_name').value;
-//     const provider = document.getElementById('provider').value;
-//     const aiBtn = document.getElementById('aiBtn');
-//     const responseWrapper = document.getElementById('ai-response-wrapper');
-//     const responseDiv = document.getElementById('ai-response');
-
-//     if (!question || !apiKey) {
-//         alert("Please enter both a question and your API Key.");
-//         return;
-//     }
-
-    
-//     const context = `
-//         Current Inventory Stats:
-//         - Total Predicted Revenue: ${document.getElementById('rev-value').innerText}
-//         - Products Needing Reorder: ${document.getElementById('reorder-count').innerText}
-//         - Units at Expiry Risk: ${document.getElementById('expiry-count').innerText}
-//         - User Question: ${question}
-//     `;
-
-//     aiBtn.innerText = "Consulting AI...";
-//     aiBtn.disabled = true;
-//     responseWrapper.classList.remove('d-none');
-//     responseDiv.innerText = "Analyzing your inventory trends...";
-
-//     try {
-//         // This assumes you have a proxy route in Flask to handle the API call
-//         // OR you are calling Groq/OpenAI directly from JS (Careful with API keys in frontend!)
-//         const response = await fetch('http://127.0.0.1:5000/ask_ai', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({
-//                 question: question,
-//                 context: context,
-//                 api_key: apiKey,
-//                 model: model,
-//                 provider: provider
-//             })
-//         });
-
-//         const result = await response.json();
-
-//         if (result.answer) {
-//             responseDiv.innerHTML = result.answer.replace(/\n/g, '<br>');
-//             aiGeneratedText = result.answer;
-//         } else {
-//             throw new Error(result.error || "Failed to get AI response");
-//         }
-
-//     } catch (error) {
-//         responseDiv.innerHTML = `<span class="text-warning">Error: ${error.message}</span>`;
-//     } finally {
-//         aiBtn.innerText = "Generate AI Insights";
-//         aiBtn.disabled = false;
-//     }
-// }
-
-// // Utility to toggle API key visibility
-// function togglePass() {
-//     const passInput = document.getElementById('apiKey');
-//     passInput.type = passInput.type === 'password' ? 'text' : 'password';
-// }
-// function resetToUpload() {
-//     document.getElementById('nav-hub-stage').classList.add('d-none');
-//     document.getElementById('upload-stage').classList.remove('d-none');
-//     document.getElementById('csvFile').value = '';
-// }
-
 
 let revenueChartInstance = null; 
 
@@ -548,7 +451,6 @@ function renderRevenueChart(revenueData) {
 
     const labels = Object.keys(revenueData);
 
-    // Safely extract the numeric value from the object
     const values = labels.map(key => {
         const entry = revenueData[key];
         return typeof entry === 'object' ? (entry['Predicted Revenue'] || 0) : entry;
@@ -607,7 +509,6 @@ async function askAI() {
     aiBtn.innerText = "Consulting AI...";
     aiBtn.disabled = true;
 
-    // ✅ FIX: null safety added
     if (responseWrapper) {
         responseWrapper.classList.remove('d-none');
     }
@@ -628,15 +529,10 @@ async function askAI() {
             })
         });
 
-        // const result = await response.json();
         const result = await response.json();
         console.log("AI RESULT:", result);
 
-        // ✅ FIX: null safety added
-        // if (result.answer && responseDiv) {
-        //     responseDiv.innerHTML = result.answer.replace(/\n/g, '<br>');
-        //     aiGeneratedText = result.answer;
-        // } 
+        
         console.log("AI RESULT:", result);
 
 const output =
@@ -647,17 +543,13 @@ const output =
 const responseDiv = document.getElementById('ai-response');
 
 if (responseDiv) {
-    responseDiv.style.display = "block";   // 🔥 ensure visible
+    responseDiv.style.display = "block";   
     responseDiv.innerHTML = output.replace(/\n/g, '<br>');
 } else {
     console.error("❌ ai-response div NOT FOUND in HTML");
 }
-        // else {
-        //     throw new Error(result.error || "Failed to get AI response");
-        // }
-
+        
     } catch (error) {
-        // ✅ FIX: null safety added
         if (responseDiv) {
             responseDiv.innerHTML = `<span class="text-warning">Error: ${error.message}</span>`;
         }
@@ -687,7 +579,6 @@ async function downloadReport() {
             })
         });
 
-        // ❗ CHECK RESPONSE FIRST (IMPORTANT)
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(errorText || "Server error");
@@ -695,7 +586,6 @@ async function downloadReport() {
 
         const blob = await response.blob();
 
-        // ❗ VALIDATE FILE
         if (blob.size === 0) {
             throw new Error("Empty PDF received");
         }
@@ -710,7 +600,7 @@ async function downloadReport() {
         a.click();
         a.remove();
 
-        window.URL.revokeObjectURL(url); // cleanup
+        window.URL.revokeObjectURL(url); 
 
     } catch (err) {
         console.error("Download error:", err);
